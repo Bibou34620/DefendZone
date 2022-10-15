@@ -11,3 +11,5 @@ scene.isOnGame = false
 
 -- Variables mouse
 mouse.cursor = nil
+mouse.x = nil
+mouse.y = nil
