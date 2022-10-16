@@ -1,8 +1,13 @@
 require('tables')
 
-buttonx = 300
-buttony = 100
-fontScale = love.graphics.newFont("fonts/Monocraft.otf", 20)
+buttonplayx = 300
+buttonplayy = 180
+
+buttonquitx = 300
+buttonquity = 280
+
+buttonFont = love.graphics.newFont("fonts/Monocraft.otf", 20)
+astuceFont = love.graphics.newFont("fonts/Monocraft.otf", 15)
 mainMenuMusic = love.audio.newSource("sounds/MainMenuMusic.wav", "stream")
 isOnPlayButton = false
 
@@ -12,6 +17,12 @@ function love.load()
   
   --Charger le logo
   logo = love.graphics.newImage("images/logo.png")
+  
+  --Charger le background
+  bg = love.graphics.newImage("images/background.png")
+  
+  --Charger zone
+  zone = love.graphics.newImage("images/zone.png")
 end
 
 function love.draw()
@@ -21,13 +32,33 @@ function love.draw()
     love.audio.play(mainMenuMusic)
     
     --Si la souris touche le bouton
-    collidesWithButton()
+    collidesWithPlayButton()
     
-    --Dessiner bouton 1
-    createButton()
+    collidesWithQuitButton()
     
-    --Définir couleur du curseur
-    love.graphics.setColor(1, 0, 0)
+    --Dessiner bouton Play
+    createPlayButton()
+    
+    --Dessiner bouton Quit
+    createQuitButton()
+    
+    drawAstuce()
+    
+    setCursorColor()
+  
+  end
+  
+  if scene.isOnGame == true then
+    
+    love.graphics.setColor(1, 1, 1)
+    
+    love.audio.stop(mainMenuMusic)
+    
+    --Dessiner le background
+    love.graphics.draw(bg)
+    
+    --Dessiner la zone
+    love.graphics.draw(zone, 50)
   end
   --Dessiner le curseur <TOUJOURS EN DERNIER>
   love.graphics.draw(mouse.cursor, mouse.x, mouse.y)
@@ -46,26 +77,63 @@ function love.keypressed(key)
    end
 end
 
-function createButton()
-  button = love.graphics.rectangle("fill", buttonx, buttony, 200, 40)
+function createPlayButton()
+  love.graphics.setColor(1, 1, 1)
+  
+  button = love.graphics.rectangle("fill", buttonplayx, buttonplayy, 200, 40)
   
   love.graphics.setColor(0.1, 0, 0)
-  love.graphics.setFont(fontScale)
-  love.graphics.print("Jouer", buttonx + 68, buttony + 8)
+  love.graphics.setFont(buttonFont)
+  love.graphics.print("Jouer !", buttonplayx + 61, buttonplayy + 8)
 end
 
-function collidesWithButton()
-  if math.abs(mouse.x - buttonx) < 200 and math.abs(mouse.y - buttony) < 40 then
-    love.graphics.setColor(1, 0.8, 0.9)
+function createQuitButton()
+  
+  love.graphics.setColor(1, 1, 1)
+  
+  buttonquit = love.graphics.rectangle("fill", buttonquitx, buttonquity, 200, 40)
+  
+  love.graphics.setColor(0.1, 0, 0)
+  love.graphics.setFont(buttonFont)
+  love.graphics.print("Quitter", buttonquitx + 58, buttonquity + 8)
+end
+
+function collidesWithPlayButton()
+  if math.abs(mouse.x - buttonplayx) < 200 and math.abs(mouse.y - buttonplayy) < 40 then
     isOnPlayButton = true
   else
-    love.graphics.setColor(1, 1, 1)
     isOnPlayButton = false
+  end
+end
+
+function collidesWithQuitButton()
+  if math.abs(mouse.x - buttonquitx) < 200 and math.abs(mouse.y - buttonquity) < 40 then
+    isOnQuitButton = true
+  else
+    isOnQuitButton = false
   end
 end
 
 function love.mousepressed(x, y, button)
   if button == 1 and isOnPlayButton == true then
     scene.isOnMenu = false
+    scene.isOnGame = true
   end
+  
+  if button == 1 and isOnQuitButton == true then
+    love.event.quit()
+  end
+end
+
+function drawAstuce()
+  love.graphics.setColor(1, 1, 1)
+  
+  love.graphics.setFont(astuceFont)
+  
+  love.graphics.print("Astuce: Appuyez sur Espace pour Cacher/Afficher le curseur", 120, 500)
+end
+
+function setCursorColor()
+  --Définir couleur du curseur
+  love.graphics.setColor(1, 0, 0)
 end
